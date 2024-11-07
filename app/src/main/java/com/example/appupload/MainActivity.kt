@@ -1,14 +1,21 @@
 package com.example.appupload
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -72,8 +79,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Função para fazer o upload do arquivo
-    private fun upload(filePath: String) {
-        // Adicione a lógica de upload do arquivo aqui
-        // Exemplo: println("Fazendo upload do arquivo: $filePath")
+    private fun upload(arquivo: String) {
+        val pb: ProgressBar = findViewById(R.id.progresso)
+        pb.visibility = View.VISIBLE
+
+        val file = File(arquivo)
+        val requestBody = RequestBody.create(MediaType.parse("*/*"), file)
+        val fileToUpload = MultipartBody.Part.createFormData("arquivo", file.name, requestBody)
+        val filename = RequestBody.create(MediaType.parse("text/plain"), file.name)
+
+        val apiConfig = AppConfig.getRetrofit().create(ApiConfig::class.java)
+        val call = apiConfig.uploadFile(fileToUpload, filename)
+
+        call.enqueue(object : Callback<ServerResponse> {
+            override fun onResponse(call: Call<ServerResponse>, response: Response<ServerResponse>) {
+                val serverResponse = response.body()
+                if (serverResponse != null) {
+                    if (serverResponse.success) {
+                        Toast.makeText(applicationContext, serverResponse.message, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(applicationContext, serverResponse.message, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    serverResponse?.let {
+                        println("Response: ${it.toString()}")
+                    }
+                }
+                pb.visibility = View.GONE
+            }
+
+            override fun onFailure(call: Call<ServerResponse>, t: Throwable) {
+                pb.visibility = View.GONE
+                Toast.makeText(applicationContext, "Upload falhou: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

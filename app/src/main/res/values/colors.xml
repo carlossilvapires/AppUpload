@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Defina a cor principal (colorPrimary) aqui -->
+    <color name="colorPrimary">#6200EE</color>  <!-- Exemplo de cor roxa -->
+    <color name="colorPrimaryVariant">#3700B3</color>  <!-- Variante mais escura da cor principal -->
+    <color name="colorOnPrimary">#FFFFFF</color>  <!-- Cor do texto ou ícones sobre a cor principal -->
 </resources>
