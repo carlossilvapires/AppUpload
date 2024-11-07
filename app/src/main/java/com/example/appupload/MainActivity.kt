@@ -1,4 +1,4 @@
-Apackage com.example.appupload
+package com.example.appupload
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
